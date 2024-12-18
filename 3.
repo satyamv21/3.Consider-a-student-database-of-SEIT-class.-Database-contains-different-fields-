@@ -1,0 +1,108 @@
+#include <iostream>
+#include <cstring>
+using namespace std;
+
+const int SIZE = 5;
+
+struct Student {
+    int rollNo;
+    char name[20];
+    float SGPA;
+};
+
+void accept(Student list[SIZE]);
+void display(Student list[SIZE]);
+void searchBySGPA(Student list[SIZE], float targetSGPA);
+void sortByName(Student list[SIZE]);
+int binarySearchByName(Student list[SIZE], const char targetName[]);
+
+int main() {
+    Student list[SIZE];
+    accept(list);
+
+    cout << "\nDatabase before sorting:\n";
+    display(list);
+
+    sortByName(list);
+
+    cout << "\nDatabase after sorting by name:\n";
+    display(list);
+
+    float targetSGPA;
+    cout << "\nEnter SGPA to search: ";
+    cin >> targetSGPA;
+    searchBySGPA(list, targetSGPA);
+
+    char targetName[20];
+    cout << "\nEnter name to search: ";
+    cin >> targetName;
+    int index = binarySearchByName(list, targetName);
+    if (index != -1) {
+        cout << "Student found:\n";
+        cout << "Roll No: " << list[index].rollNo
+             << ", Name: " << list[index].name
+             << ", SGPA: " << list[index].SGPA << endl;
+    } else {
+        cout << "Student with name " << targetName << " not found.\n";
+    }
+
+    return 0;
+}
+
+void accept(Student list[SIZE]) {
+    for (int i = 0; i < SIZE; i++) {
+        cout << "Enter Roll No, Name, and SGPA for student " << (i + 1) << ": ";
+        cin >> list[i].rollNo >> list[i].name >> list[i].SGPA;
+    }
+}
+
+void display(Student list[SIZE]) {
+    cout << "\nRoll No\tName\t\tSGPA\n";
+    for (int i = 0; i < SIZE; i++) {
+        cout << list[i].rollNo << "\t" << list[i].name << "\t\t" << list[i].SGPA << endl;
+    }
+}
+
+void searchBySGPA(Student list[SIZE], float targetSGPA) {
+    cout << "\nStudents with SGPA " << targetSGPA << ":\n";
+    bool found = false;
+    for (int i = 0; i < SIZE; i++) {
+        if (list[i].SGPA == targetSGPA) {
+            cout << "Roll No: " << list[i].rollNo
+                 << ", Name: " << list[i].name
+                 << ", SGPA: " << list[i].SGPA << endl;
+            found = true;
+        }
+    }
+    if (!found) {
+        cout << "No students found with SGPA " << targetSGPA << ".\n";
+    }
+}
+
+void sortByName(Student list[SIZE]) {
+    for (int i = 1; i < SIZE; i++) {
+        Student key = list[i];
+        int j = i - 1;
+        while (j >= 0 && strcmp(list[j].name, key.name) > 0) {
+            list[j + 1] = list[j];
+            j--;
+        }
+        list[j + 1] = key;
+    }
+}
+
+int binarySearchByName(Student list[SIZE], const char targetName[]) {
+    int low = 0, high = SIZE - 1;
+    while (low <= high) {
+        int mid = low + (high - low) / 2;
+        int comparison = strcmp(list[mid].name, targetName);
+        if (comparison == 0) {
+            return mid;
+        } else if (comparison < 0) {
+            low = mid + 1;
+        } else {
+            high = mid - 1;
+        }
+    }
+    return -1;
+}
